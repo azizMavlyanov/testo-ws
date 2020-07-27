@@ -31,7 +31,7 @@ public class CategoryController {
     public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryRequestModel categoryRequestModel) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(modelMapper.map(categoryService
-                        .create(modelMapper.map(categoryRequestModel, CategoryEntity.class)),
+                                .create(modelMapper.map(categoryRequestModel, CategoryEntity.class)),
                         CategoryResponseModel.class));
     }
 
@@ -47,5 +47,17 @@ public class CategoryController {
                     int size
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.findAll(page, size));
+    }
+
+    @GetMapping(
+            value = "/{categoryId}",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
+    public ResponseEntity<?> getCategory(@PathVariable(value = "categoryId")
+                                         @Min(value = 1, message = "categoryId must be greater than 0")
+                                                 Long categoryId) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(modelMapper
+                .map(categoryService.findOne(categoryId), CategoryResponseModel.class));
     }
 }

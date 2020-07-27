@@ -46,4 +46,10 @@ public class CategoryServiceImpl implements CategoryService {
 
         return pagedAndSortedData;
     }
+
+    @Override
+    public CategoryEntity findOne(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new Error("Category not found"));
+    }
 }
