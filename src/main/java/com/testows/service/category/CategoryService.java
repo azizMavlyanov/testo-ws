@@ -15,4 +15,5 @@ public interface CategoryService {
     void delete(Long categoryId);
     ProductEntity addProduct(Long categoryId, ProductEntity productEntity);
     PageableAndSortableData<ProductResponseModel> getProducts(Long categoryId, int page, int size);
+    ProductEntity updateProduct(Long categoryId, Long productId, ProductEntity productEntity);
 }

@@ -115,4 +115,16 @@ public class CategoryServiceImpl implements CategoryService {
 
         return pagedAndSortedData;
     }
+
+    @Override
+    public ProductEntity updateProduct(Long categoryId, Long productId, ProductEntity productEntity) {
+        this.findOne(categoryId);
+        ProductEntity productInDB = productRepository.findById(productId)
+                .orElseThrow(() -> new Error("Product not found"));
+
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        modelMapper.map(productEntity, productInDB);
+
+        return productRepository.save(productInDB);
+    }
 }

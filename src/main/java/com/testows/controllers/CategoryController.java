@@ -126,4 +126,21 @@ public class CategoryController {
 
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getProducts(categoryId, page, size));
     }
+
+    @PatchMapping(value = "/{categoryId}/products/{productId}")
+    public ResponseEntity<?> updateProduct(
+            @PathVariable(value = "categoryId")
+            @Min(value = 1, message = "Category ID must be greater than 0")
+                    Long categoryId,
+            @PathVariable(value = "productId")
+            @Min(value = 1, message = "Product ID must be greater than 0")
+                                     Long productId,
+            @Valid @RequestBody ProductUpdateModel productUpdateModel) {
+
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(modelMapper.map(categoryService
+                        .updateProduct(categoryId, productId, modelMapper.map(productUpdateModel, ProductEntity.class)),
+                        ProductResponseModel.class));
+    }
 }
