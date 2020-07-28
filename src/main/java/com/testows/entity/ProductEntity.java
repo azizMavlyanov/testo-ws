@@ -1,5 +1,7 @@
 package com.testows.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.testows.models.Currency;
 import com.testows.validators.ValueOfEnum;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "product")
 @DynamicUpdate
+@JsonIgnoreProperties(value = {"category"})
 public class ProductEntity implements Serializable {
     private static final long serialVersionUID = -5756681197560663971L;
 

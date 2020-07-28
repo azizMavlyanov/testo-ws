@@ -1,5 +1,6 @@
 package com.testows.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.testows.entity.CategoryEntity;
 
 import java.time.LocalDateTime;
