@@ -5,6 +5,7 @@ import com.testows.dao.ProductRepository;
 import com.testows.entity.CategoryEntity;
 import com.testows.entity.ProductEntity;
 import com.testows.models.PageableAndSortableData;
+import com.testows.models.ProductResponseModel;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -83,5 +85,34 @@ public class CategoryServiceImpl implements CategoryService {
         productEntity.setCategory(categoryEntity);
 
         return productRepository.save(productEntity);
+    }
+
+    @Override
+    public PageableAndSortableData<ProductResponseModel> getProducts(Long categoryId, int page, int size) {
+        CategoryEntity categoryEntity = this.findOne(categoryId);
+
+        List<ProductResponseModel> products = new ArrayList<>();
+
+        if (page != 0) {
+            page--;
+        }
+
+        Pageable pageableRequest = PageRequest.of(page, size);
+        Page<ProductEntity> productEntities = productRepository.findByCategory(categoryEntity, pageableRequest);
+
+        for (ProductEntity productEntity : productEntities.getContent()) {
+            products.add(modelMapper.map(productEntity, ProductResponseModel.class));
+        }
+
+        PageableAndSortableData<ProductResponseModel> pagedAndSortedData = new PageableAndSortableData<>();
+        pagedAndSortedData.setPage(productEntities.getPageable().getPageNumber() + 1);
+        pagedAndSortedData.setSize(productEntities.getPageable().getPageSize());
+        pagedAndSortedData.setHasPrevious(productEntities.hasPrevious());
+        pagedAndSortedData.setHasNext(productEntities.hasNext());
+        pagedAndSortedData.setTotalElements(productEntities.getTotalElements());
+        pagedAndSortedData.setSort(productEntities.getSort().toString());
+        pagedAndSortedData.setData(products);
+
+        return pagedAndSortedData;
     }
 }

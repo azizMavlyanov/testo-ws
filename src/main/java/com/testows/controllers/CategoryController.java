@@ -88,7 +88,11 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping(value = "/{categoryId}/products")
+    @PostMapping(
+            value = "/{categoryId}/products",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
     public ResponseEntity<?> addProduct(
             @PathVariable(value = "categoryId")
             @Min(value = 1, message = "categoryId must be greater than 0")
@@ -96,11 +100,30 @@ public class CategoryController {
             @Valid @RequestBody ProductRequestModel productRequestModel
     )
     {
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
                         modelMapper.map(categoryService
                                 .addProduct(categoryId, modelMapper.map(productRequestModel, ProductEntity.class)),
                                 ProductResponseModel.class));
+
+    }
+
+    @GetMapping(
+            value = "/{categoryId}/products",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
+    public ResponseEntity<?> getProducts(
+            @PathVariable(value = "categoryId")
+            @Min(value = 1, message = "categoryId must be greater than 0")
+                    Long categoryId,
+            @RequestParam(value = "page", defaultValue = "1")
+            @Min(value = 1, message = "page must be greater than 0")
+                    int page,
+            @Min(value = 1, message = "limit must be greater than 0")
+            @RequestParam(value = "size", defaultValue = "10")
+                    int size
+    ) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getProducts(categoryId, page, size));
     }
 }
