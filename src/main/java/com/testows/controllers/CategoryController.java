@@ -127,6 +127,20 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getProducts(categoryId, page, size));
     }
 
+    @GetMapping(value = "/{categoryId}/products/{productId}")
+    public ResponseEntity<?> getProduct(
+            @PathVariable(value = "categoryId")
+            @Min(value = 1, message = "Category ID must be greater than 0")
+                    Long categoryId,
+            @PathVariable(value = "productId")
+            @Min(value = 1, message = "Product ID must be greater than 0")
+                    Long productId
+    )
+    {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(modelMapper.map(categoryService.getProduct(categoryId, productId), ProductResponseModel.class));
+    }
+
     @PatchMapping(value = "/{categoryId}/products/{productId}")
     public ResponseEntity<?> updateProduct(
             @PathVariable(value = "categoryId")
@@ -142,5 +156,20 @@ public class CategoryController {
                 .body(modelMapper.map(categoryService
                         .updateProduct(categoryId, productId, modelMapper.map(productUpdateModel, ProductEntity.class)),
                         ProductResponseModel.class));
+    }
+
+    @DeleteMapping(value = "/{categoryId}/products/{productId}")
+    public ResponseEntity<?> deleteProduct(
+            @PathVariable(value = "categoryId")
+            @Min(value = 1, message = "Category ID must be greater than 0")
+                    Long categoryId,
+            @PathVariable(value = "productId")
+            @Min(value = 1, message = "Product ID must be greater than 0")
+                    Long productId
+    )
+    {
+        categoryService.deleteProduct(categoryId, productId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

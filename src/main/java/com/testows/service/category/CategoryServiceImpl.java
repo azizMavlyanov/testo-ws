@@ -117,6 +117,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public ProductEntity getProduct(Long categoryId, Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new Error("Product not found"));
+    }
+
+    @Override
     public ProductEntity updateProduct(Long categoryId, Long productId, ProductEntity productEntity) {
         this.findOne(categoryId);
         ProductEntity productInDB = productRepository.findById(productId)
@@ -126,5 +132,11 @@ public class CategoryServiceImpl implements CategoryService {
         modelMapper.map(productEntity, productInDB);
 
         return productRepository.save(productInDB);
+    }
+
+    @Override
+    public void deleteProduct(Long categoryId, Long productId) {
+        ProductEntity productEntity = this.getProduct(categoryId, productId);
+        productRepository.deleteById(productEntity.getProductId());
     }
 }
