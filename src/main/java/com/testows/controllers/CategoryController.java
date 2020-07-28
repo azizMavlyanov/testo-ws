@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ import javax.validation.constraints.Min;
 
 @RestController
 @RequestMapping("/api/v1/categories")
+@Validated
 public class CategoryController {
     @Autowired
     CategoryService categoryService;
@@ -75,5 +77,16 @@ public class CategoryController {
     {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(categoryService.update(categoryId, modelMapper.map(categoryUpdateModel, CategoryEntity.class)));
+    }
+
+    @DeleteMapping(value = "/{categoryId}")
+    public ResponseEntity<?> deleteCategory(
+            @PathVariable(value = "categoryId")
+            @Min(value = 1, message = "Category ID must be greater than 0")
+                    Long categoryId)
+    {
+        categoryService.delete(categoryId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

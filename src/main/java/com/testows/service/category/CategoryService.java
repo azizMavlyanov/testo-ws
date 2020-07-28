@@ -8,4 +8,5 @@ public interface CategoryService {
     PageableAndSortableData<CategoryEntity> findAll(int page, int size);
     CategoryEntity findOne(Long categoryId);
     CategoryEntity update(Long categoryId, CategoryEntity categoryEntity);
+    void delete(Long categoryId);
 }
