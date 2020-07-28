@@ -1,7 +1,10 @@
 package com.testows.service.category;
 
 import com.testows.entity.CategoryEntity;
+import com.testows.entity.ProductEntity;
 import com.testows.models.PageableAndSortableData;
+
+import java.util.List;
 
 public interface CategoryService {
     CategoryEntity create(CategoryEntity categoryEntity);
@@ -9,4 +12,5 @@ public interface CategoryService {
     CategoryEntity findOne(Long categoryId);
     CategoryEntity update(Long categoryId, CategoryEntity categoryEntity);
     void delete(Long categoryId);
+    ProductEntity addProduct(Long categoryId, ProductEntity productEntity);
 }

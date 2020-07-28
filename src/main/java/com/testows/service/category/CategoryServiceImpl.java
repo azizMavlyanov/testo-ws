@@ -1,7 +1,9 @@
 package com.testows.service.category;
 
 import com.testows.dao.CategoryRepository;
+import com.testows.dao.ProductRepository;
 import com.testows.entity.CategoryEntity;
+import com.testows.entity.ProductEntity;
 import com.testows.models.PageableAndSortableData;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -11,15 +13,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
     private ModelMapper modelMapper;
+    private ProductRepository productRepository;
 
     @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository,
+                               ModelMapper modelMapper,
+                               ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -67,5 +75,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void delete(Long categoryId) {
         categoryRepository.delete(this.findOne(categoryId));
+    }
+
+    @Override
+    public ProductEntity addProduct(Long categoryId, ProductEntity productEntity) {
+        CategoryEntity categoryEntity = findOne(categoryId);
+        productEntity.setCategory(categoryEntity);
+
+        return productRepository.save(productEntity);
     }
 }

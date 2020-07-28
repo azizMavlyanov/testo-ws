@@ -5,6 +5,8 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "category")
@@ -23,6 +25,8 @@ public class CategoryEntity implements Serializable {
     private String name;
     @Column(nullable = false)
     private String image;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.LAZY)
+    private List<ProductEntity> products = new ArrayList<>();
 
     public Long getCategoryId() {
         return categoryId;
@@ -48,4 +52,21 @@ public class CategoryEntity implements Serializable {
         this.image = image;
     }
 
+    public List<ProductEntity> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<ProductEntity> products) {
+        this.products = products;
+    }
+
+    public void addProduct(ProductEntity productEntity) {
+        products.add(productEntity);
+
+        productEntity.setCategory(this);
+    }
+
+    public void removeProduct(ProductEntity productEntity) {
+        products.remove(productEntity);
+    }
 }

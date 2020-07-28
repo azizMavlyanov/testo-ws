@@ -1,10 +1,8 @@
 package com.testows.controllers;
 
 import com.testows.entity.CategoryEntity;
-import com.testows.models.CategoryRequestModel;
-import com.testows.models.CategoryResponseModel;
-import com.testows.models.CategoryUpdateModel;
-import com.testows.models.PageableAndSortableData;
+import com.testows.entity.ProductEntity;
+import com.testows.models.*;
 import com.testows.service.category.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,5 +86,21 @@ public class CategoryController {
         categoryService.delete(categoryId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping(value = "/{categoryId}/products")
+    public ResponseEntity<?> addProduct(
+            @PathVariable(value = "categoryId")
+            @Min(value = 1, message = "categoryId must be greater than 0")
+                    Long categoryId,
+            @Valid @RequestBody ProductRequestModel productRequestModel
+    )
+    {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(
+                        modelMapper.map(categoryService
+                                .addProduct(categoryId, modelMapper.map(productRequestModel, ProductEntity.class)),
+                                ProductResponseModel.class));
     }
 }
