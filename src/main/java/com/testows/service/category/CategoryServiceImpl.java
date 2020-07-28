@@ -3,6 +3,7 @@ package com.testows.service.category;
 import com.testows.dao.CategoryRepository;
 import com.testows.entity.CategoryEntity;
 import com.testows.models.PageableAndSortableData;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,5 +52,15 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryEntity findOne(Long categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new Error("Category not found"));
+    }
+
+    @Override
+    public CategoryEntity update(Long categoryId, CategoryEntity categoryEntity) {
+        CategoryEntity categoryInDB = this.findOne(categoryId);
+
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        modelMapper.map(categoryEntity, categoryInDB);
+
+        return categoryRepository.save(categoryInDB);
     }
 }

@@ -1,5 +1,6 @@
 package com.testows.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;

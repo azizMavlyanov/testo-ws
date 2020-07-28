@@ -3,6 +3,7 @@ package com.testows.controllers;
 import com.testows.entity.CategoryEntity;
 import com.testows.models.CategoryRequestModel;
 import com.testows.models.CategoryResponseModel;
+import com.testows.models.CategoryUpdateModel;
 import com.testows.models.PageableAndSortableData;
 import com.testows.service.category.CategoryService;
 import org.modelmapper.ModelMapper;
@@ -59,5 +60,20 @@ public class CategoryController {
 
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper
                 .map(categoryService.findOne(categoryId), CategoryResponseModel.class));
+    }
+    @PatchMapping(
+            value = "/{categoryId}",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
+    public ResponseEntity<?> updateCategory(
+            @PathVariable(value = "categoryId")
+            @Min(value = 1, message = "Category ID must be greater than 0")
+                    Long categoryId,
+            @Valid @RequestBody CategoryUpdateModel categoryUpdateModel
+            )
+    {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(categoryService.update(categoryId, modelMapper.map(categoryUpdateModel, CategoryEntity.class)));
     }
 }

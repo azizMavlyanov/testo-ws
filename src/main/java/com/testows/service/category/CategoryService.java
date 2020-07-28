@@ -7,4 +7,5 @@ public interface CategoryService {
     CategoryEntity create(CategoryEntity categoryEntity);
     PageableAndSortableData<CategoryEntity> findAll(int page, int size);
     CategoryEntity findOne(Long categoryId);
+    CategoryEntity update(Long categoryId, CategoryEntity categoryEntity);
 }
