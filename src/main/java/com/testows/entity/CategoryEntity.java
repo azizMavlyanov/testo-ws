@@ -1,6 +1,5 @@
 package com.testows.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -25,7 +24,7 @@ public class CategoryEntity implements Serializable {
     private String name;
     @Column(nullable = false)
     private String image;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<ProductEntity> products = new ArrayList<>();
 
     public Long getCategoryId() {

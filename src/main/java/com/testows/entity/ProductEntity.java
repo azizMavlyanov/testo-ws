@@ -1,7 +1,5 @@
 package com.testows.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.testows.models.Currency;
 import com.testows.validators.ValueOfEnum;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,11 +9,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
 @DynamicUpdate
-@JsonIgnoreProperties(value = {"category"})
 public class ProductEntity implements Serializable {
     private static final long serialVersionUID = -5756681197560663971L;
 
@@ -30,6 +29,9 @@ public class ProductEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<PurchaseItemEntity> purchaseItemEntities = new ArrayList<>();
 
     @Column(nullable = false)
     private String name;
@@ -145,5 +147,18 @@ public class ProductEntity implements Serializable {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<PurchaseItemEntity> getPurchaseItemEntities() {
+        return purchaseItemEntities;
+    }
+
+    public void setPurchaseItemEntities(List<PurchaseItemEntity> purchaseItemEntities) {
+        this.purchaseItemEntities = purchaseItemEntities;
+    }
+
+    public void addPurchaseItem(PurchaseItemEntity purchaseItemEntity) {
+        purchaseItemEntities.add(purchaseItemEntity);
+        purchaseItemEntity.setProduct(this);
     }
 }
