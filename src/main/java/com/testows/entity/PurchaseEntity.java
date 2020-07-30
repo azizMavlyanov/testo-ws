@@ -31,12 +31,13 @@ public class PurchaseEntity implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToMany(mappedBy = "purchase", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "purchase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PurchaseItemEntity> purchaseItemEntities = new ArrayList<>();
 
     @ValueOfEnum(enumClass = OrderStatus.class)
     @Column(nullable = false)
     private String status;
+    @Column(nullable = false)
     private String address;
 
     @CreationTimestamp

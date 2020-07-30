@@ -1,34 +1,17 @@
-package com.testows.entity;
+package com.testows.models;
 
-import org.hibernate.annotations.DynamicUpdate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.testows.entity.PurchaseEntity;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "user")
-@DynamicUpdate
-public class UserEntity implements Serializable {
-    private static final long serialVersionUID = -4022597018036664182L;
-
-    public UserEntity() {
-    }
-
-    @Id
-    @GeneratedValue
+public class UserResponseModel {
     private Long userId;
-
     private String firstName;
-
     private String lastName;
-
-    @Column(nullable = false, unique = true)
     private String phoneNumber;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<PurchaseEntity> purchases = new ArrayList<>();
+    @JsonIgnore
+    private List<PurchaseEntity> purchases;
 
     public Long getUserId() {
         return userId;
@@ -68,12 +51,5 @@ public class UserEntity implements Serializable {
 
     public void setPurchases(List<PurchaseEntity> purchases) {
         this.purchases = purchases;
-    }
-
-    public PurchaseEntity addPurchase(PurchaseEntity purchaseEntity) {
-        purchases.add(purchaseEntity);
-        purchaseEntity.setUser(this);
-
-        return purchaseEntity;
     }
 }

@@ -15,6 +15,19 @@ public class PurchaseItemEntity implements Serializable {
     public PurchaseItemEntity() {
     }
 
+    public PurchaseItemEntity(PurchaseEntity purchase, ProductEntity product,
+                              @Min(value = 1, message = "Quantity must be greater than 0") Long quantity) {
+        this.purchase = purchase;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public PurchaseItemEntity(ProductEntity product,
+                              @Min(value = 1, message = "Quantity must be greater than 0") Long quantity) {
+        this.product = product;
+        this.quantity = quantity;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "purchase_item_id")

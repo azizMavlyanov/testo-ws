@@ -24,7 +24,7 @@ public class CategoryEntity implements Serializable {
     private String name;
     @Column(nullable = false)
     private String image;
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProductEntity> products = new ArrayList<>();
 
     public Long getCategoryId() {

@@ -30,7 +30,7 @@ public class ProductEntity implements Serializable {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PurchaseItemEntity> purchaseItemEntities = new ArrayList<>();
 
     @Column(nullable = false)
