@@ -6,11 +6,14 @@ import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
 import org.apache.tomcat.jni.File;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,5 +51,18 @@ public class ProductServiceImpl implements ProductService {
         Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
 
         Thumbnails.of(copyLocation.toString()).size(150, 150).outputFormat("jpg").toFiles(Rename.NO_CHANGE);
+    }
+
+    @Override
+    public Resource loadImage(Long productId, String imageName) throws MalformedURLException {
+        Path productImagesDirectory = Paths.get("src", "main", "resources",
+                "static", "assets", "images", "products");
+        String absolutePath = productImagesDirectory.toFile().getAbsolutePath();
+        Path copyLocation = Path
+                .of(absolutePath, imageName);
+
+        Resource resource = new UrlResource(copyLocation.toUri());
+
+        return resource;
     }
 }

@@ -2,6 +2,8 @@ package com.testows.controllers;
 
 import com.testows.service.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +29,13 @@ public class ProductController {
     }
 
     @GetMapping(value = "/{productId}/images/{imageName}")
-    public String getImages() {
+    public ResponseEntity<?> getImages(@PathVariable(value = "productId") Long productId,
+                                       @PathVariable(value = "imageName") String imageName
+                                       ) throws Exception {
+        Resource file = productService.loadImage(productId, imageName);
 
-        return null;
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE,
+                "image/jpg").body(file);
+
     }
 }
