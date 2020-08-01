@@ -8,7 +8,6 @@ public class ProductUpdateModel {
     @ValueOfEnum(enumClass = Currency.class)
     private String currency;
     private Boolean active;
-    private String image;
     private String weight;
     private String description;
 
@@ -42,14 +41,6 @@ public class ProductUpdateModel {
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getWeight() {

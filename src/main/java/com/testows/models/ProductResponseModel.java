@@ -1,22 +1,28 @@
 package com.testows.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.testows.entity.CategoryEntity;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class ProductResponseModel {
     private Long productId;
-    private String category;
     private String name;
+    @JsonIgnoreProperties(value = {"categoryId", "image", "products"})
+    @JsonUnwrapped
+    private CategoryEntity category;
     private Float price;
     private String currency;
     private Boolean active;
     private String image;
     private String weight;
     private String description;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="UTC")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone="UTC")
     private LocalDateTime updatedAt;
 
     public Long getProductId() {
@@ -27,12 +33,12 @@ public class ProductResponseModel {
         this.productId = productId;
     }
 
-    public String getCategory() {
+    public CategoryEntity getCategory() {
         return category;
     }
 
-    public void setCategory(CategoryEntity categoryEntity) {
-        this.category = categoryEntity.getName();
+    public void setCategory(CategoryEntity category) {
+        this.category = category;
     }
 
     public String getName() {
@@ -91,16 +97,16 @@ public class ProductResponseModel {
         this.description = description;
     }
 
-    public String getCreatedAt() {
-        return createdAt.format(DateTimeFormatter.ISO_DATE_TIME);
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
-        return updatedAt.format(DateTimeFormatter.ISO_DATE_TIME);
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {

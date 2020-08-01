@@ -47,7 +47,7 @@ public class ProductEntity implements Serializable {
     private Boolean active;
 
     @Column(nullable = false)
-    private String image;
+    private String image = "default.png";
 
     private String weight;
 

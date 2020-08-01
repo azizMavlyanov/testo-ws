@@ -4,16 +4,20 @@ import com.testows.dao.CategoryRepository;
 import com.testows.dao.ProductRepository;
 import com.testows.entity.CategoryEntity;
 import com.testows.entity.ProductEntity;
+import com.testows.models.CategoryResponseModel;
 import com.testows.models.PageableAndSortableData;
 import com.testows.models.ProductResponseModel;
+import com.testows.models.UserResponseModel;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public PageableAndSortableData<CategoryEntity> findAll(int page, int size) {
+    public PageableAndSortableData<CategoryResponseModel> findAll(int page, int size) {
         if (page != 0) {
             page--;
         }
@@ -46,14 +50,18 @@ public class CategoryServiceImpl implements CategoryService {
         Pageable pageableRequest = PageRequest.of(page, size);
         Page<CategoryEntity> categoryEntities = categoryRepository.findAll(pageableRequest);
 
-        PageableAndSortableData<CategoryEntity> pagedAndSortedData = new PageableAndSortableData<>();
+        PageableAndSortableData<CategoryResponseModel> pagedAndSortedData = new PageableAndSortableData<>();
         pagedAndSortedData.setPage(categoryEntities.getPageable().getPageNumber() + 1);
         pagedAndSortedData.setSize(categoryEntities.getPageable().getPageSize());
         pagedAndSortedData.setHasPrevious(categoryEntities.hasPrevious());
         pagedAndSortedData.setHasNext(categoryEntities.hasNext());
         pagedAndSortedData.setTotalElements(categoryEntities.getTotalElements());
         pagedAndSortedData.setSort(categoryEntities.getSort().toString());
-        pagedAndSortedData.setData(categoryEntities.getContent());
+
+        Type listType = new TypeToken<List<CategoryResponseModel>>(){}.getType();
+        List<CategoryResponseModel> categoryResponseList = modelMapper.map(categoryEntities.getContent(), listType);
+
+        pagedAndSortedData.setData(categoryResponseList);
 
         return pagedAndSortedData;
     }

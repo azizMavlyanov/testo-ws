@@ -1,5 +1,6 @@
 package com.testows.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -21,6 +22,7 @@ public class CategoryEntity implements Serializable {
     @Column(name = "category_id")
     private Long categoryId;
     @Column(nullable = false, unique = true)
+    @JsonProperty(value = "category")
     private String name;
     @Column(nullable = false)
     private String image;

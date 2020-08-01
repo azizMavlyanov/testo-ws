@@ -13,7 +13,6 @@ public class ProductRequestModel {
     @NotNull(message = "Currency value cannot be null")
     private String currency = Currency.RUB.name();
     private Boolean active = true;
-    private String image = "/assets/images/default.png";
     private String weight;
     private String description;
 
@@ -47,14 +46,6 @@ public class ProductRequestModel {
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getWeight() {
