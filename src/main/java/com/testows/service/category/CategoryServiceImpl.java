@@ -4,17 +4,15 @@ import com.testows.dao.CategoryRepository;
 import com.testows.dao.ProductRepository;
 import com.testows.entity.CategoryEntity;
 import com.testows.entity.ProductEntity;
-import com.testows.exceptions.CategoryServiceException;
+import com.testows.exceptions.CommonServiceException;
 import com.testows.exceptions.ErrorMessages;
 import com.testows.exceptions.ResourceAlreadyExistsException;
 import com.testows.exceptions.ResourceNotFoundException;
 import com.testows.models.CategoryResponseModel;
 import com.testows.models.PageableAndSortableData;
 import com.testows.models.ProductResponseModel;
-import com.testows.models.UserResponseModel;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
-import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             return categoryRepository.save(categoryEntity);
         } catch (Exception e) {
-            throw new CategoryServiceException(e.getLocalizedMessage());
+            throw new CommonServiceException(e.getLocalizedMessage());
         }
     }
 
@@ -110,7 +107,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             return categoryRepository.save(categoryInDB);
         } catch (Exception e) {
-            throw new CategoryServiceException(e.getLocalizedMessage());
+            throw new CommonServiceException(e.getLocalizedMessage());
         }
     }
 
@@ -158,7 +155,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             return productRepository.save(productEntity);
         } catch (Exception e) {
-            throw new CategoryServiceException(e.getLocalizedMessage());
+            throw new CommonServiceException(e.getLocalizedMessage());
         }
     }
 
@@ -209,7 +206,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             return productRepository.save(productInDB);
         } catch (Exception e) {
-            throw new CategoryServiceException(e.getLocalizedMessage());
+            throw new CommonServiceException(e.getLocalizedMessage());
         }
     }
 
@@ -220,7 +217,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             productRepository.deleteById(productEntity.getProductId());
         } catch (Exception e) {
-            throw new CategoryServiceException(e.getLocalizedMessage());
+            throw new CommonServiceException(e.getLocalizedMessage());
         }
     }
 }

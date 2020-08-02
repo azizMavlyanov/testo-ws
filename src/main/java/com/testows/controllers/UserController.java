@@ -31,7 +31,7 @@ public class UserController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserRequestModel userRequestModel) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserRequestModel userRequestModel) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(modelMapper.map(userService.create(modelMapper.map(userRequestModel, UserEntity.class)),
                         UserResponseModel.class));
@@ -57,7 +57,7 @@ public class UserController {
     )
     public ResponseEntity<?> getUser(
             @Min(value = 1, message = "user ID must be greater than 0")
-            @PathVariable(value = "userId") Long userId) {
+            @PathVariable(value = "userId") Long userId) throws Exception {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(modelMapper.map(userService.findOne(userId), UserResponseModel.class));
@@ -72,7 +72,7 @@ public class UserController {
             @Min(value = 1, message = "user ID must be greater than 0")
             @PathVariable(value = "userId") Long userId,
             @Valid @RequestBody UserUpdateModel userUpdateModel
-            )
+            ) throws Exception
     {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(modelMapper
@@ -83,7 +83,8 @@ public class UserController {
     public ResponseEntity<?> deleteUser(
             @Min(value = 1, message = "user ID must be greater than 0")
             @PathVariable(value = "userId") Long userId
-    ) {
+    ) throws Exception
+    {
         userService.delete(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -96,7 +97,8 @@ public class UserController {
     public ResponseEntity<?> createOrder(
             @Min(value = 1, message = "user ID must be greater than 0")
             @PathVariable(value = "userId") Long userId,
-            @Valid @RequestBody PurchaseRequestModel purchaseRequestModel) {
+            @Valid @RequestBody PurchaseRequestModel purchaseRequestModel) throws Exception
+    {
 
         PurchaseResponseModel purchaseResponseModel = modelMapper.map(purchaseService.createOrder(userId, purchaseRequestModel),
                 PurchaseResponseModel.class);

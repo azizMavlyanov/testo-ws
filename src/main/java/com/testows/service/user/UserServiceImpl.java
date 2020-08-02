@@ -2,6 +2,10 @@ package com.testows.service.user;
 
 import com.testows.dao.UserRepository;
 import com.testows.entity.UserEntity;
+import com.testows.exceptions.CommonServiceException;
+import com.testows.exceptions.ErrorMessages;
+import com.testows.exceptions.ResourceAlreadyExistsException;
+import com.testows.exceptions.ResourceNotFoundException;
 import com.testows.models.PageableAndSortableData;
 import com.testows.models.UserResponseModel;
 import com.testows.models.UserUpdateModel;
@@ -30,14 +34,22 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity create(UserEntity userEntity) {
-        return userRepository.save(userEntity);
+    public UserEntity create(UserEntity userEntity) throws Exception {
+        if (userRepository.findByPhoneNumber(userEntity.getPhoneNumber()) != null) {
+            throw new ResourceAlreadyExistsException(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
+        }
+
+        try {
+            return userRepository.save(userEntity);
+        } catch (Exception e) {
+            throw new CommonServiceException(e.getLocalizedMessage());
+        }
     }
 
     @Override
-    public UserEntity findOne(Long userId) {
+    public UserEntity findOne(Long userId) throws Exception {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new Error("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage()));
     }
 
     @Override
@@ -66,18 +78,26 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity update(Long userId, UserUpdateModel userUpdateModel) {
+    public UserEntity update(Long userId, UserUpdateModel userUpdateModel) throws Exception {
         UserEntity userEntity = this.findOne(userId);
         modelMapper.map(userUpdateModel, userEntity);
 
-        return userRepository.save(userEntity);
+        try {
+            return userRepository.save(userEntity);
+        } catch (Exception e) {
+            throw new CommonServiceException(e.getLocalizedMessage());
+        }
     }
 
     @Override
-    public UserEntity delete(Long userId) {
+    public void delete(Long userId) throws Exception{
         UserEntity userEntity = this.findOne(userId);
-        userRepository.deleteById(userEntity.getUserId());
 
-        return userEntity;
+        try {
+            userRepository.deleteById(userEntity.getUserId());
+        } catch (Exception e) {
+            throw new CommonServiceException(e.getLocalizedMessage());
+        }
+
     }
 }

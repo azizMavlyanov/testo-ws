@@ -12,8 +12,8 @@ import java.util.Date;
 
 @ControllerAdvice
 public class AppExceptionsHandler {
-    @ExceptionHandler(value = {CategoryServiceException.class})
-    public ResponseEntity<Object> handleCategoryServiceException(CategoryServiceException ex, WebRequest request) {
+    @ExceptionHandler(value = {CommonServiceException.class})
+    public ResponseEntity<Object> handleCategoryServiceException(CommonServiceException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(new Date(), ex.getLocalizedMessage());
 
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);

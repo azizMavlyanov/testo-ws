@@ -45,7 +45,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public PurchaseEntity createOrder(Long userId, PurchaseRequestModel purchaseRequestModel) {
+    public PurchaseEntity createOrder(Long userId, PurchaseRequestModel purchaseRequestModel) throws Exception {
         UserEntity userEntity = userService.findOne(userId);
         PurchaseEntity purchaseEntity = new PurchaseEntity();
         purchaseEntity.setAddress(purchaseRequestModel.getAddress());
@@ -58,8 +58,8 @@ public class PurchaseServiceImpl implements PurchaseService {
                             item.getQuantity()));
         }
 
-        PurchaseEntity purchaseEntity1 = purchaseRepository.save(purchaseEntity);
+        PurchaseEntity createdPurchase = purchaseRepository.save(purchaseEntity);
 
-        return purchaseEntity1;
+        return createdPurchase;
     }
 }
