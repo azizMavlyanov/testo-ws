@@ -4,6 +4,7 @@ import com.testows.dao.CategoryRepository;
 import com.testows.dao.ProductRepository;
 import com.testows.entity.CategoryEntity;
 import com.testows.entity.ProductEntity;
+import com.testows.exceptions.CategoryServiceException;
 import com.testows.exceptions.ErrorMessages;
 import com.testows.exceptions.ResourceAlreadyExistsException;
 import com.testows.exceptions.ResourceNotFoundException;
@@ -11,18 +12,29 @@ import com.testows.models.CategoryResponseModel;
 import com.testows.models.PageableAndSortableData;
 import com.testows.models.ProductResponseModel;
 import com.testows.models.UserResponseModel;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.name.Rename;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -40,13 +52,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryEntity create(CategoryEntity categoryEntity) {
+    public CategoryEntity create(CategoryEntity categoryEntity) throws Exception {
 
         if (categoryRepository.findByName(categoryEntity.getName()) != null) {
             throw new ResourceAlreadyExistsException(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
         }
 
-        return categoryRepository.save(categoryEntity);
+        try {
+            return categoryRepository.save(categoryEntity);
+        } catch (Exception e) {
+            throw new CategoryServiceException(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -82,7 +98,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryEntity update(Long categoryId, CategoryEntity categoryEntity) {
+    public CategoryEntity update(Long categoryId, CategoryEntity categoryEntity) throws Exception {
         CategoryEntity categoryInDB = this.findOne(categoryId);
 
         if (categoryRepository.findByName(categoryEntity.getName()) != null) {
@@ -91,7 +107,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         modelMapper.map(categoryEntity, categoryInDB);
 
-        return categoryRepository.save(categoryInDB);
+        try {
+            return categoryRepository.save(categoryInDB);
+        } catch (Exception e) {
+            throw new CategoryServiceException(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -100,18 +120,51 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ProductEntity addProduct(Long categoryId, ProductEntity productEntity) {
+    public void uploadImage(Long categoryId, MultipartFile file) throws Exception {
+        CategoryEntity categoryEntity = this.findOne(categoryId);
+
+        Path categoryImagesDirectory = Paths.get("src", "main", "resources",
+                "static", "assets", "images", "categories");
+        String absolutePath = categoryImagesDirectory.toFile().getAbsolutePath();
+
+        Path copyLocation = Path
+                .of(absolutePath,
+                        StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename())));
+
+        Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+
+        Thumbnails.of(copyLocation.toString()).size(70, 70).outputFormat("jpg").toFiles(Rename.NO_CHANGE);
+    }
+
+    @Override
+    public Resource loadImage(Long categoryId, String imageName) throws Exception {
+        Path categoryImagesDirectory = Paths.get("src", "main", "resources",
+                "static", "assets", "images", "categories");
+        String absolutePath = categoryImagesDirectory.toFile().getAbsolutePath();
+        Path copyLocation = Path
+                .of(absolutePath, imageName);
+
+        Resource resource = new UrlResource(copyLocation.toUri());
+
+        return resource;
+
+    }
+
+    @Override
+    public ProductEntity addProduct(Long categoryId, ProductEntity productEntity) throws Exception {
         CategoryEntity categoryEntity = findOne(categoryId);
         productEntity.setCategory(categoryEntity);
 
-        return productRepository.save(productEntity);
+        try {
+            return productRepository.save(productEntity);
+        } catch (Exception e) {
+            throw new CategoryServiceException(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public PageableAndSortableData<ProductResponseModel> getProducts(Long categoryId, int page, int size) {
         CategoryEntity categoryEntity = this.findOne(categoryId);
-
-        List<ProductResponseModel> products = new ArrayList<>();
 
         if (page != 0) {
             page--;
@@ -120,10 +173,6 @@ public class CategoryServiceImpl implements CategoryService {
         Pageable pageableRequest = PageRequest.of(page, size);
         Page<ProductEntity> productEntities = productRepository.findByCategory(categoryEntity, pageableRequest);
 
-        for (ProductEntity productEntity : productEntities.getContent()) {
-            products.add(modelMapper.map(productEntity, ProductResponseModel.class));
-        }
-
         PageableAndSortableData<ProductResponseModel> pagedAndSortedData = new PageableAndSortableData<>();
         pagedAndSortedData.setPage(productEntities.getPageable().getPageNumber() + 1);
         pagedAndSortedData.setSize(productEntities.getPageable().getPageSize());
@@ -131,6 +180,11 @@ public class CategoryServiceImpl implements CategoryService {
         pagedAndSortedData.setHasNext(productEntities.hasNext());
         pagedAndSortedData.setTotalElements(productEntities.getTotalElements());
         pagedAndSortedData.setSort(productEntities.getSort().toString());
+
+        Type listType = new TypeToken<List<ProductResponseModel>>() {
+        }.getType();
+        List<ProductResponseModel> products = modelMapper.map(productEntities.getContent(), listType);
+
         pagedAndSortedData.setData(products);
 
         return pagedAndSortedData;
@@ -138,25 +192,35 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ProductEntity getProduct(Long categoryId, Long productId) {
+        this.findOne(categoryId);
+
         return productRepository.findById(productId)
-                .orElseThrow(() -> new Error("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage()));
     }
 
     @Override
-    public ProductEntity updateProduct(Long categoryId, Long productId, ProductEntity productEntity) {
+    public ProductEntity updateProduct(Long categoryId, Long productId, ProductEntity productEntity) throws Exception {
         this.findOne(categoryId);
         ProductEntity productInDB = productRepository.findById(productId)
-                .orElseThrow(() -> new Error("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage()));
 
-        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
         modelMapper.map(productEntity, productInDB);
 
-        return productRepository.save(productInDB);
+        try {
+            return productRepository.save(productInDB);
+        } catch (Exception e) {
+            throw new CategoryServiceException(e.getLocalizedMessage());
+        }
     }
 
     @Override
-    public void deleteProduct(Long categoryId, Long productId) {
+    public void deleteProduct(Long categoryId, Long productId) throws Exception {
         ProductEntity productEntity = this.getProduct(categoryId, productId);
-        productRepository.deleteById(productEntity.getProductId());
+
+        try {
+            productRepository.deleteById(productEntity.getProductId());
+        } catch (Exception e) {
+            throw new CategoryServiceException(e.getLocalizedMessage());
+        }
     }
 }

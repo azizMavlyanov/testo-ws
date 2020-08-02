@@ -6,11 +6,14 @@ import com.testows.models.*;
 import com.testows.service.category.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -29,7 +32,7 @@ public class CategoryController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
-    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryRequestModel categoryRequestModel) {
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryRequestModel categoryRequestModel) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(modelMapper.map(categoryService
                                 .create(modelMapper.map(categoryRequestModel, CategoryEntity.class)),
@@ -71,7 +74,7 @@ public class CategoryController {
             @Min(value = 1, message = "Category ID must be greater than 0")
                     Long categoryId,
             @Valid @RequestBody CategoryUpdateModel categoryUpdateModel
-            )
+            ) throws Exception
     {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(modelMapper.map(categoryService.update(categoryId,
@@ -89,6 +92,29 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping(value = "/{categoryId}/images")
+    public ResponseEntity<?> uploadImage(@PathVariable(value = "categoryId") Long categoryId,
+                                         @RequestParam("file") MultipartFile file) throws Exception {
+        try {
+            categoryService.uploadImage(categoryId, file);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @GetMapping(value = "/{categoryId}/images/{imageName}")
+    public ResponseEntity<?> getImages(@PathVariable(value = "categoryId") Long categoryId,
+                                       @PathVariable(value = "imageName") String imageName
+    ) throws Exception {
+        Resource file = categoryService.loadImage(categoryId, imageName);
+
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE,
+                "image/jpg").body(file);
+
+    }
+
     @PostMapping(
             value = "/{categoryId}/products",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -99,7 +125,7 @@ public class CategoryController {
             @Min(value = 1, message = "categoryId must be greater than 0")
                     Long categoryId,
             @Valid @RequestBody ProductRequestModel productRequestModel
-    )
+    ) throws Exception
     {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
@@ -150,9 +176,8 @@ public class CategoryController {
             @PathVariable(value = "productId")
             @Min(value = 1, message = "Product ID must be greater than 0")
                                      Long productId,
-            @Valid @RequestBody ProductUpdateModel productUpdateModel) {
-
-
+            @Valid @RequestBody ProductUpdateModel productUpdateModel) throws Exception
+    {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(modelMapper.map(categoryService
                         .updateProduct(categoryId, productId, modelMapper.map(productUpdateModel, ProductEntity.class)),
@@ -167,7 +192,7 @@ public class CategoryController {
             @PathVariable(value = "productId")
             @Min(value = 1, message = "Product ID must be greater than 0")
                     Long productId
-    )
+    ) throws Exception
     {
         categoryService.deleteProduct(categoryId, productId);
 
