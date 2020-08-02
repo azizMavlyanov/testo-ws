@@ -74,7 +74,8 @@ public class CategoryController {
             )
     {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(categoryService.update(categoryId, modelMapper.map(categoryUpdateModel, CategoryEntity.class)));
+                .body(modelMapper.map(categoryService.update(categoryId,
+                        modelMapper.map(categoryUpdateModel, CategoryEntity.class)), CategoryResponseModel.class));
     }
 
     @DeleteMapping(value = "/{categoryId}")

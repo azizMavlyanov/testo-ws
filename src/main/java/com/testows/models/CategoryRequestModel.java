@@ -1,12 +1,10 @@
 package com.testows.models;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 public class CategoryRequestModel {
-    @NotNull(message = "Category name cannot be null")
+    @NotBlank(message = "Category name cannot be neither null nor blank")
     private String name;
-    @NotNull(message = "Category image cannot be null")
-    private String image = "/images/defaults/category.jpg";
 
     public String getName() {
         return name;
@@ -16,11 +14,4 @@ public class CategoryRequestModel {
         this.name = name;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
 }

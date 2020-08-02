@@ -1,7 +1,5 @@
 package com.testows.models;
 
-import javax.validation.constraints.NotNull;
-
 public class CategoryResponseModel {
     private Long categoryId;
     private String name;

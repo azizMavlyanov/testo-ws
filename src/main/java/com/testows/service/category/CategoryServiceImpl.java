@@ -4,6 +4,9 @@ import com.testows.dao.CategoryRepository;
 import com.testows.dao.ProductRepository;
 import com.testows.entity.CategoryEntity;
 import com.testows.entity.ProductEntity;
+import com.testows.exceptions.ErrorMessages;
+import com.testows.exceptions.ResourceAlreadyExistsException;
+import com.testows.exceptions.ResourceNotFoundException;
 import com.testows.models.CategoryResponseModel;
 import com.testows.models.PageableAndSortableData;
 import com.testows.models.ProductResponseModel;
@@ -38,6 +41,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryEntity create(CategoryEntity categoryEntity) {
+
+        if (categoryRepository.findByName(categoryEntity.getName()) != null) {
+            throw new ResourceAlreadyExistsException(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
+        }
+
         return categoryRepository.save(categoryEntity);
     }
 
@@ -58,7 +66,8 @@ public class CategoryServiceImpl implements CategoryService {
         pagedAndSortedData.setTotalElements(categoryEntities.getTotalElements());
         pagedAndSortedData.setSort(categoryEntities.getSort().toString());
 
-        Type listType = new TypeToken<List<CategoryResponseModel>>(){}.getType();
+        Type listType = new TypeToken<List<CategoryResponseModel>>() {
+        }.getType();
         List<CategoryResponseModel> categoryResponseList = modelMapper.map(categoryEntities.getContent(), listType);
 
         pagedAndSortedData.setData(categoryResponseList);
@@ -69,14 +78,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryEntity findOne(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new Error("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage()));
     }
 
     @Override
     public CategoryEntity update(Long categoryId, CategoryEntity categoryEntity) {
         CategoryEntity categoryInDB = this.findOne(categoryId);
 
-        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        if (categoryRepository.findByName(categoryEntity.getName()) != null) {
+            throw new ResourceAlreadyExistsException(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
+        }
+
         modelMapper.map(categoryEntity, categoryInDB);
 
         return categoryRepository.save(categoryInDB);

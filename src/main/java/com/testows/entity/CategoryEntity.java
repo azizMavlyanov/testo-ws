@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "category")
+@Table(
+        name = "category",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
+)
 @DynamicUpdate
 public class CategoryEntity implements Serializable {
     private static final long serialVersionUID = 6580629678611086685L;
@@ -21,11 +24,11 @@ public class CategoryEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private Long categoryId;
-    @Column(nullable = false, unique = true)
     @JsonProperty(value = "category")
+    @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private String image;
+    private String image = "default.jpg";
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProductEntity> products = new ArrayList<>();
 
