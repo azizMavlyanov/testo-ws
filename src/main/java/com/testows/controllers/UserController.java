@@ -88,22 +88,4 @@ public class UserController {
         userService.delete(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-    @PostMapping(
-            value = "/{userId}/purchases",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-    )
-    public ResponseEntity<?> createOrder(
-            @Min(value = 1, message = "user ID must be greater than 0")
-            @PathVariable(value = "userId") Long userId,
-            @Valid @RequestBody PurchaseRequestModel purchaseRequestModel) throws Exception
-    {
-
-        PurchaseResponseModel purchaseResponseModel = modelMapper.map(purchaseService.createOrder(userId, purchaseRequestModel),
-                PurchaseResponseModel.class);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(purchaseResponseModel);
-    }
 }

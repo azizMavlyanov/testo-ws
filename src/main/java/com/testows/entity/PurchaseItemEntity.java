@@ -1,5 +1,7 @@
 package com.testows.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -9,6 +11,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "purchase_item")
 @DynamicUpdate
+
 public class PurchaseItemEntity implements Serializable {
     private static final long serialVersionUID = -6443604035583989142L;
 

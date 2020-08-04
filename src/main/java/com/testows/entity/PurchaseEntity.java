@@ -1,9 +1,12 @@
 package com.testows.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.testows.models.OrderStatus;
+import com.testows.models.PurchaseItem;
 import com.testows.validators.ValueOfEnum;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -39,6 +42,9 @@ public class PurchaseEntity implements Serializable {
     private String status;
     @Column(nullable = false)
     private String address;
+
+    @Transient
+    private float totalPrice;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -107,5 +113,17 @@ public class PurchaseEntity implements Serializable {
     public void addPurchaseItem(PurchaseItemEntity purchaseItemEntity) {
         purchaseItemEntities.add(purchaseItemEntity);
         purchaseItemEntity.setPurchase(this);
+    }
+
+    public float getTotalPrice() {
+        for (PurchaseItemEntity purchaseItemEntity : this.purchaseItemEntities) {
+            totalPrice += ((float) purchaseItemEntity.getQuantity() * purchaseItemEntity.getProduct().getPrice());
+        }
+
+        return totalPrice;
+    }
+
+    public void setTotalPrice(float totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

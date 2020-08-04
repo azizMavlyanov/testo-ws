@@ -2,6 +2,8 @@ package com.testows.service.product;
 
 import com.testows.dao.ProductRepository;
 import com.testows.entity.ProductEntity;
+import com.testows.exceptions.ErrorMessages;
+import com.testows.exceptions.ResourceNotFoundException;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
 import org.apache.tomcat.jni.File;
@@ -33,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductEntity findOne(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new Error("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage()));
     }
 
     @Override
