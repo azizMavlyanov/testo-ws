@@ -1,40 +1,21 @@
-package com.testows.entity;
+package com.testows.DTOs;
 
-import org.hibernate.annotations.DynamicUpdate;
+import com.testows.entity.PurchaseEntity;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name="user")
-@DynamicUpdate
-public class UserEntity implements Serializable {
-    private static final long serialVersionUID = -4022597018036664182L;
-
-    public UserEntity() {
-    }
-
-    @Id
-    @GeneratedValue
+public class UserDTO implements Serializable {
+    private static final long serialVersionUID = -3037642426087752559L;
     private Long userId;
-
-    @Column(nullable = false)
     private String firstName;
-
     private String lastName;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
+    private String password;
     private String encryptedPassword;
     private String emailVerificationToken;
-    @Column(nullable = false)
     private Boolean emailVerificationStatus = false;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<PurchaseEntity> purchases = new ArrayList<>();
+    private List<PurchaseEntity> purchases;
 
     public Long getUserId() {
         return userId;
@@ -68,6 +49,14 @@ public class UserEntity implements Serializable {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEncryptedPassword() {
         return encryptedPassword;
     }
@@ -98,12 +87,5 @@ public class UserEntity implements Serializable {
 
     public void setPurchases(List<PurchaseEntity> purchases) {
         this.purchases = purchases;
-    }
-
-    public PurchaseEntity addPurchase(PurchaseEntity purchaseEntity) {
-        purchases.add(purchaseEntity);
-        purchaseEntity.setUser(this);
-
-        return purchaseEntity;
     }
 }

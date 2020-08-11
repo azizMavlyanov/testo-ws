@@ -8,11 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(
-        name = "category",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
-)
+@Entity(name = "category")
 @DynamicUpdate
 public class CategoryEntity implements Serializable {
     private static final long serialVersionUID = 6580629678611086685L;
@@ -25,7 +21,7 @@ public class CategoryEntity implements Serializable {
     @Column(name = "category_id")
     private Long categoryId;
     @JsonProperty(value = "category")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
     @Column(nullable = false)
     private String image = "default.jpg";

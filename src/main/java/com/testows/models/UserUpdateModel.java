@@ -1,12 +1,12 @@
 package com.testows.models;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Email;
 
 public class UserUpdateModel {
     private String firstName;
     private String lastName;
-    @Pattern(regexp = "^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$", message = "Invalid phone number")
-    private String phoneNumber;
+    @Email(message = "Invalid email address")
+    private String email;
 
     public String getFirstName() {
         return firstName;
@@ -24,11 +24,11 @@ public class UserUpdateModel {
         this.lastName = lastName;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

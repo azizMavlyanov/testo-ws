@@ -33,7 +33,7 @@ public class UserController {
     )
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRequestModel userRequestModel) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(modelMapper.map(userService.create(modelMapper.map(userRequestModel, UserEntity.class)),
+                .body(modelMapper.map(userService.create(userRequestModel),
                         UserResponseModel.class));
     }
 

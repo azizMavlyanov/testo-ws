@@ -53,25 +53,6 @@ public class PurchaseServiceImpl implements PurchaseService {
         this.userService = userService;
     }
 
-//    @Override
-//    public PurchaseEntity createOrder(Long userId, PurchaseRequestModel purchaseRequestModel) throws Exception {
-//        UserEntity userEntity = userService.findOne(userId);
-//        PurchaseEntity purchaseEntity = new PurchaseEntity();
-//        purchaseEntity.setAddress(purchaseRequestModel.getAddress());
-//        purchaseEntity.setStatus(purchaseRequestModel.getStatus());
-//        purchaseEntity.setUser(userEntity);
-//
-//        for (PurchaseProductModel item : purchaseRequestModel.getProducts()) {
-//            purchaseEntity
-//                    .addPurchaseItem(new PurchaseItemEntity(productService.findOne(item.getProductId()),
-//                            item.getQuantity()));
-//        }
-//
-//        PurchaseEntity createdPurchase = purchaseRepository.save(purchaseEntity);
-//
-//        return createdPurchase;
-//    }
-
     @Override
     public PurchaseEntity createOrder(Long userId, PurchaseRequestModel purchaseRequestModel) throws Exception {
         UserEntity userEntity = userService.findOne(userId);

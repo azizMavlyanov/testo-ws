@@ -8,8 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 
-@Entity
-@Table(name = "purchase_item")
+@Entity(name = "purchase_item")
 @DynamicUpdate
 
 public class PurchaseItemEntity implements Serializable {

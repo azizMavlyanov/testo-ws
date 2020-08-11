@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "product")
+@Entity(name = "product")
 @DynamicUpdate
 public class ProductEntity implements Serializable {
     private static final long serialVersionUID = -5756681197560663971L;
